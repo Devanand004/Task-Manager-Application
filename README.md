@@ -1,185 +1,294 @@
 # Task Manager API
 
-A simple Spring Boot REST API for managing tasks with JPA and H2 in-memory database.
+A modern, full-featured Task Management application built with Spring Boot and vanilla JavaScript. Create, update, delete, and manage tasks with an intuitive interface and powerful REST API.
 
-## Features
+---
 
-- Create new tasks
-- Retrieve all tasks
-- Task management with title, description, and completion status
-- H2 in-memory database with console access
-- RESTful API endpoints
+## 🚀 Quick Start
 
-## Requirements
+### Prerequisites
+- **Java 23+** 
+- **Maven 3.6+** (or use included Maven Wrapper)
+- **Windows/Linux/Mac**
 
-- Java 23 (or higher)
-- Maven 3.6+ (or use Maven Wrapper included)
-- Windows/Linux/Mac OS
+### Installation & Setup
 
-## Installation
-
-1. Clone or download the project:
+1. **Navigate to project:**
    ```bash
    cd "Task Manager API\demo"
    ```
 
-2. Build the project:
+2. **Build the project:**
    ```bash
    mvnw.cmd clean install
    ```
-   (On Linux/Mac, use `./mvnw clean install`)
 
-## Running the Application
+3. **Run the application:**
+   ```bash
+   $env:JAVA_HOME = "C:\Program Files\Java\jdk-23"
+   java -jar target/demo-0.0.1-SNAPSHOT.jar --server.port=8081
+   ```
 
-### Using Maven Wrapper:
-```bash
-.\mvnw.cmd spring-boot:run
-```
+4. **Access the application:**
+   - **Frontend:** http://localhost:8081/tasks.html
+   - **API:** http://localhost:8081/api/tasks
 
-### Using Java directly:
-```bash
-java -jar target/demo-0.0.1-SNAPSHOT.jar
-```
+---
 
-The application will start on `http://localhost:8080`
+## 📋 Features
 
-## API Endpoints
+✅ **Full CRUD Operations**
+- Create new tasks
+- Read/View all tasks
+- Update existing tasks
+- Delete tasks
 
-### Get All Tasks
-- **Endpoint:** `GET /api/tasks`
-- **Response:** 
-  ```json
-  [
-    {
-      "id": 1,
-      "title": "Sample Task",
-      "description": "Task description",
-      "completed": false
-    }
-  ]
-  ```
+✅ **Task Management**
+- Title & Description
+- Due dates
+- Status tracking (Pending, In Progress, Completed)
+- Timestamps (Created, Updated)
 
-### Create a Task
-- **Endpoint:** `POST /api/tasks`
-- **Request Body:**
-  ```json
-  {
-    "title": "New Task",
-    "description": "Task description",
-    "completed": false
-  }
-  ```
-- **Response:** 
-  ```json
-  {
-    "id": 1,
-    "title": "New Task",
-    "description": "Task description",
-    "completed": false
-  }
-  ```
+✅ **Modern UI**
+- Responsive design (mobile-friendly)
+- Color-coded status badges
+- Smooth animations
+- Professional styling
 
-## Database
+✅ **REST API**
+- Complete RESTful endpoints
+- JSON request/response format
+- CORS enabled
+- Error handling
 
-### H2 In-Memory Database
-- **Database Name:** taskdb
-- **Console URL:** `http://localhost:8080/h2-console`
-- **JDBC URL:** `jdbc:h2:mem:taskdb`
-- **Username:** sa
-- **Password:** (empty)
+---
 
-The database schema is automatically created using JPA with Hibernate DDL auto-update.
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 demo/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/example/demo/
-│   │   │   ├── controller/          # REST controllers
+│   │   │   ├── controller/
 │   │   │   │   ├── HomeController.java
-│   │   │   │   └── TaskController.java
-│   │   │   ├── model/               # Entity classes
-│   │   │   │   └── Task.java
-│   │   │   ├── repository/          # JPA repositories
-│   │   │   │   └── TaskRepository.java
-│   │   │   └── DemoApplication.java # Main Spring Boot application
+│   │   │   │   └── TaskController.java       # REST API endpoints
+│   │   │   ├── model/
+│   │   │   │   └── Task.java                 # Task entity
+│   │   │   ├── service/
+│   │   │   │   └── TaskService.java          # Business logic
+│   │   │   ├── repository/
+│   │   │   │   └── TaskRepository.java       # Data access
+│   │   │   └── DemoApplication.java          # Main app
 │   │   └── resources/
-│   │       ├── static/              # Static files
-│   │       │   ├── tasks.html
-│   │       │   ├── script.js
-│   │       │   └── style.css
-│   │       └── application.properties
+│   │       ├── static/
+│   │       │   ├── tasks.html                # Frontend HTML
+│   │       │   ├── script.js                 # Frontend logic
+│   │       │   └── style.css                 # Frontend styling
+│   │       └── application.properties        # Configuration
 │   └── test/
-│       └── java/                    # Test files
-├── pom.xml
-├── mvnw / mvnw.cmd                 # Maven Wrapper
-└── README.md
+│       └── java/DemoApplicationTests.java    # Unit tests
+├── scripts/
+│   └── database.sql                          # Database schema
+├── pom.xml                                   # Maven config
+├── mvnw / mvnw.cmd                          # Maven Wrapper
+└── README.md                                 # This file
 ```
 
-## Technologies Used
+---
 
-- **Spring Boot 3.5.4** - Web framework
-- **Spring Data JPA** - Data persistence
-- **Hibernate** - ORM framework
-- **H2 Database** - In-memory database
-- **Maven** - Build tool
-- **Java 23** - Programming language
+## 🔌 REST API Endpoints
 
-## Configuration
-
-Application configuration is in `src/main/resources/application.properties`:
-
-```properties
-# H2 database config
-spring.datasource.url=jdbc:h2:mem:taskdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
-
-# JPA
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.jpa.hibernate.ddl-auto=update
-
-# H2 console
-spring.h2.console.enabled=true
-spring.h2.console.path=/h2-console
+### Get All Tasks
+```
+GET /api/tasks
+```
+**Response (200):**
+```json
+[
+  {
+    "id": 1,
+    "title": "Complete Project",
+    "description": "Finish the task manager",
+    "status": "IN_PROGRESS",
+    "dueDate": "2026-03-20",
+    "createdAt": "2026-03-15T22:29:20Z",
+    "updatedAt": "2026-03-15T22:29:20Z"
+  }
+]
 ```
 
-## Testing
+### Get Task by ID
+```
+GET /api/tasks/{id}
+```
 
-Run tests with:
+### Create Task
+```
+POST /api/tasks
+Content-Type: application/json
+
+{
+  "title": "New Task",
+  "description": "Task details",
+  "status": "PENDING",
+  "dueDate": "2026-04-01"
+}
+```
+
+### Update Task
+```
+PUT /api/tasks/{id}
+Content-Type: application/json
+
+{
+  "title": "Updated Task",
+  "description": "Updated details",
+  "status": "COMPLETED",
+  "dueDate": "2026-04-01"
+}
+```
+
+### Delete Task
+```
+DELETE /api/tasks/{id}
+```
+
+---
+
+## 🗄️ Database Configuration
+
+**Current Database:** MySQL  
+**Alternative:** H2 (in-memory) available in configuration
+
+**Database Credentials:**
+- **URL:** `jdbc:mysql://localhost:3306/taskdb`
+- **Username:** root
+- **Password:** (configured in application.properties)
+
+**Schema:** Auto-created by Hibernate (DDL auto-update)
+
+---
+
+## ⚙️ Technology Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
+| **Backend** | Spring Boot 3.5.4 |
+| **Framework** | Spring Data JPA, Hibernate |
+| **Database** | MySQL 8.0 |
+| **Build Tool** | Maven 3.x |
+| **Runtime** | Java 23 |
+
+---
+
+## 🛠️ Development
+
+### Build Project
 ```bash
-.\mvnw.cmd test
+mvnw.cmd clean install
 ```
 
-## Build Output
-
-The built JAR file is located at: `target/demo-0.0.1-SNAPSHOT.jar`
-
-## Troubleshooting
-
-### JAVA_HOME not set
-If you get "JAVA_HOME environment variable is not defined correctly", set it:
+### Run Tests
 ```bash
-# PowerShell
+mvnw.cmd test
+```
+
+### Clean Build
+```bash
+mvnw.cmd clean
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Port 8081 Already in Use
+```bash
+netstat -ano | findstr :8081
+taskkill /PID <PID> /F
+```
+
+### JAVA_HOME Not Set
+```powershell
 $env:JAVA_HOME = "C:\Program Files\Java\jdk-23"
-
-# Command Prompt
-set JAVA_HOME=C:\Program Files\Java\jdk-23
 ```
 
-### Port 8080 already in use
-If port 8080 is already in use, you can change it:
+### Database Connection Error
+- Verify MySQL is running
+- Check `application.properties` credentials
+- Ensure database exists
+
+### Application Won't Start
 ```bash
+# Kill all Java processes
+taskkill /F /IM java.exe
+
+# Start fresh
 java -jar target/demo-0.0.1-SNAPSHOT.jar --server.port=8081
 ```
 
-## License
+---
+
+## 📝 Application Properties
+
+**Location:** `src/main/resources/application.properties`
+
+```properties
+# Server
+server.port=8081
+
+# MySQL Database
+spring.datasource.url=jdbc:mysql://localhost:3306/taskdb
+spring.datasource.username=root
+spring.datasource.password=your_password
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA/Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+# Spring
+spring.application.name=Task Manager API
+```
+
+---
+
+## 📊 Status Badges
+
+| Status | Color | Description |
+|--------|-------|-------------|
+| PENDING | 🟠 Orange | Not started |
+| IN_PROGRESS | 🔵 Blue | Currently working on |
+| COMPLETED | 🟢 Green | Finished |
+
+---
+
+## 🎯 Key Features Implemented
+
+- ✅ Full CRUD API
+- ✅ Responsive UI
+- ✅ Status tracking with color coding
+- ✅ Due date management
+- ✅ Edit mode in frontend
+- ✅ Delete confirmation dialog
+- ✅ Form validation
+- ✅ Error handling
+- ✅ Timestamp tracking
+- ✅ Cross-Origin Resource Sharing (CORS)
+
+---
+
+## 📄 License
 
 This project is provided as-is for educational purposes.
 
-## Support
+---
 
-For issues or questions, please check the application logs or review the test class in `src/test/java/`.
+## 👨‍💻 Author
+
+Task Manager API - Built with ❤️ using Spring Boot and Vanilla JavaScript
+
+**Last Updated:** March 15, 2026
