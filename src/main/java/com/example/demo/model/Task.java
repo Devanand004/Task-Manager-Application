@@ -1,6 +1,8 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -11,11 +13,13 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title is required")
     @Column(nullable = false)
     private String title;
 
     private String description;
 
+    @NotNull(message = "Status cannot be null")
     @Column(nullable = false)
     private String status; // PENDING, IN_PROGRESS, COMPLETED
 

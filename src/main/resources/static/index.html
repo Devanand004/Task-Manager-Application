@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster Pro</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-layer-group"></i>
+                <h2>TaskMaster</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-list-check"></i> All Tasks</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-calendar-day"></i> Today</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+            </nav>
+            <div class="user-profile">
+                <div class="avatar">JM</div>
+                <div class="user-info">
+                    <p class="name">John Manager</p>
+                    <p class="role">Pro Plan</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                    <p class="date-display" id="currentDate">Monday, Oct 24</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Search tasks...">
+                    </div>
+                    <button class="btn btn-primary" id="openAddModalBtn">
+                        <i class="fa-solid fa-plus"></i> New Task
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Overview -->
+            <section class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon pending"><i class="fa-solid fa-clock"></i></div>
+                    <div class="stat-details">
+                        <h3 id="pendingCount">0</h3>
+                        <p>Pending</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon progress"><i class="fa-solid fa-spinner"></i></div>
+                    <div class="stat-details">
+                        <h3 id="progressCount">0</h3>
+                        <p>In Progress</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon completed"><i class="fa-solid fa-check-circle"></i></div>
+                    <div class="stat-details">
+                        <h3 id="completedCount">0</h3>
+                        <p>Completed</p>
+                    </div>
+                </div>
+                <div class="stat-card total-card">
+                    <div class="stat-icon total"><i class="fa-solid fa-list-ol"></i></div>
+                    <div class="stat-details">
+                        <h3 id="totalCount">0</h3>
+                        <p>Total Tasks</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Task List Section -->
+            <section class="tasks-section">
+                <div class="section-header">
+                    <h2>Recent Tasks</h2>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="ALL">All</button>
+                        <button class="filter-tab" data-filter="PENDING">Pending</button>
+                        <button class="filter-tab" data-filter="IN_PROGRESS">In Progress</button>
+                        <button class="filter-tab" data-filter="COMPLETED">Completed</button>
+                    </div>
+                </div>
+                
+                <div class="tasks-list" id="tasksList">
+                    <!-- Tasks will be injected here via JS -->
+                    <div class="loading-spinner">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> Loading tasks...
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add/Edit Task Modal -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="modalTitle">Create New Task</h2>
+                <button class="close-btn" id="closeModalBtn"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <input type="hidden" id="taskId">
+                    
+                    <div class="form-group">
+                        <label for="taskTitle">Task Title *</label>
+                        <input type="text" id="taskTitle" required placeholder="e.g., Update project documentation" autocomplete="off">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskDescription">Description</label>
+                        <textarea id="taskDescription" rows="4" placeholder="Brief details about this task..."></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="taskStatus">Status</label>
+                            <select id="taskStatus">
+                                <option value="PENDING">Pending</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="COMPLETED">Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group half">
+                            <label for="taskDueDate">Due Date</label>
+                            <input type="date" id="taskDueDate">
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="saveTaskBtn">Save Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-check-circle toast-icon"></i>
+        <span id="toastMessage">Action successful!</span>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
