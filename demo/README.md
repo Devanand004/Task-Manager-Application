@@ -1,185 +1,149 @@
-# Task Manager API
+﻿# Task Manager Enterprise API
 
-A simple Spring Boot REST API for managing tasks with JPA and H2 in-memory database.
+This repository contains the `demo` Spring Boot task management application, implemented in **Java 17** with **Spring Boot 3.5.4**. It is designed as a production-ready backend with a lightweight Vanilla JavaScript SPA frontend and secure JWT-based authentication.
 
-## Features
+## ✅ What This Project Includes
 
-- Create new tasks
-- Retrieve all tasks
-- Task management with title, description, and completion status
-- H2 in-memory database with console access
-- RESTful API endpoints
+- Secure JWT authentication and registration
+- Role-based access control (`ROLE_USER`, `ROLE_ADMIN`)
+- Public task browsing without authentication
+- Authenticated task CRUD operations
+- Archive and restore workflows
+- Dynamic filtering, search, pagination, and sorting
+- Audit-style task activity logging
+- Centralized error handling with consistent API responses
+- Environment-aware profiles for `test`, `dev`, and `prod`
+- Docker and Docker Compose support
+- Flyway database migration support
 
-## Requirements
-
-- Java 23 (or higher)
-- Maven 3.6+ (or use Maven Wrapper included)
-- Windows/Linux/Mac OS
-
-## Installation
-
-1. Clone or download the project:
-   ```bash
-   cd "Task Manager API\demo"
-   ```
-
-2. Build the project:
-   ```bash
-   mvnw.cmd clean install
-   ```
-   (On Linux/Mac, use `./mvnw clean install`)
-
-## Running the Application
-
-### Using Maven Wrapper:
-```bash
-.\mvnw.cmd spring-boot:run
-```
-
-### Using Java directly:
-```bash
-java -jar target/demo-0.0.1-SNAPSHOT.jar
-```
-
-The application will start on `http://localhost:8080`
-
-## API Endpoints
-
-### Get All Tasks
-- **Endpoint:** `GET /api/tasks`
-- **Response:** 
-  ```json
-  [
-    {
-      "id": 1,
-      "title": "Sample Task",
-      "description": "Task description",
-      "completed": false
-    }
-  ]
-  ```
-
-### Create a Task
-- **Endpoint:** `POST /api/tasks`
-- **Request Body:**
-  ```json
-  {
-    "title": "New Task",
-    "description": "Task description",
-    "completed": false
-  }
-  ```
-- **Response:** 
-  ```json
-  {
-    "id": 1,
-    "title": "New Task",
-    "description": "Task description",
-    "completed": false
-  }
-  ```
-
-## Database
-
-### H2 In-Memory Database
-- **Database Name:** taskdb
-- **Console URL:** `http://localhost:8080/h2-console`
-- **JDBC URL:** `jdbc:h2:mem:taskdb`
-- **Username:** sa
-- **Password:** (empty)
-
-The database schema is automatically created using JPA with Hibernate DDL auto-update.
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 demo/
-├── src/
-│   ├── main/
-│   │   ├── java/com/example/demo/
-│   │   │   ├── controller/          # REST controllers
-│   │   │   │   ├── HomeController.java
-│   │   │   │   └── TaskController.java
-│   │   │   ├── model/               # Entity classes
-│   │   │   │   └── Task.java
-│   │   │   ├── repository/          # JPA repositories
-│   │   │   │   └── TaskRepository.java
-│   │   │   └── DemoApplication.java # Main Spring Boot application
-│   │   └── resources/
-│   │       ├── static/              # Static files
-│   │       │   ├── tasks.html
-│   │       │   ├── script.js
-│   │       │   └── style.css
-│   │       └── application.properties
-│   └── test/
-│       └── java/                    # Test files
+├── src/main/java/com/example/demo/
+│   ├── common/               # Shared response wrapper and validation helpers
+│   ├── config/               # Security, OpenAPI, and bean configuration
+│   ├── exception/            # Global REST exception handling
+│   ├── security/             # Authentication, users, JWT, and auth controllers
+│   ├── task/                 # Task feature module and business logic
+│   └── DemoApplication.java  # Main application entry point
+├── src/main/resources/       # Config, migrations, static frontend assets
+├── src/test/java/            # Unit and integration tests
+├── Dockerfile
+├── docker-compose.yml
+├── mvnw
 ├── pom.xml
-├── mvnw / mvnw.cmd                 # Maven Wrapper
-└── README.md
+├── README.md
+└── PROJECT_DOCUMENTATION.md
 ```
 
-## Technologies Used
+## 🧠 Architecture Overview
 
-- **Spring Boot 3.5.4** - Web framework
-- **Spring Data JPA** - Data persistence
-- **Hibernate** - ORM framework
-- **H2 Database** - In-memory database
-- **Maven** - Build tool
-- **Java 23** - Programming language
+### Feature-Based Modules
+The demo app uses a feature-oriented package structure:
 
-## Configuration
+- `common` — API envelopes and shared validation annotations
+- `config` — security chain, CORS, and OpenAPI setup
+- `exception` — unified error handling and response formatting
+- `security` — JWT auth, user entity, role-based access
+- `task` — task management, DTOs, entity mapping, and service logic
 
-Application configuration is in `src/main/resources/application.properties`:
+### Key Concepts
+- **Public vs Protected API**: `/api/v1/public/**` is open, while `/api/v1/tasks/**` requires authentication.
+- **JWT Security**: Stateless token validation in `JwtAuthenticationFilter`.
+- **MapStruct Mapping**: `TaskMapper` converts DTOs into entities safely.
+- **Soft Archive**: Tasks can be archived/restored instead of deleted immediately.
+- **Activity Logging**: `TaskActivity` records all task lifecycle events.
 
-```properties
-# H2 database config
-spring.datasource.url=jdbc:h2:mem:taskdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
+## 🔐 Security Details
 
-# JPA
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.jpa.hibernate.ddl-auto=update
+### Authentication API
+- `POST /api/v1/auth/register` — Register a new user
+- `POST /api/v1/auth/login` — Login and receive a JWT
 
-# H2 console
-spring.h2.console.enabled=true
-spring.h2.console.path=/h2-console
+### Role Rules
+- `ROLE_USER`: allowed to create, view, update, archive, restore tasks they own.
+- `ROLE_ADMIN`: can access all tasks and delete tasks.
+
+### Improvements in Security Layer
+- `BCryptPasswordEncoder(12)` for password hashing
+- Robust JWT parsing and token validation
+- Safe handling of empty or malformed `Authorization` headers
+- `UserDetailsService` validates username input before lookup
+
+## 🧩 Task Functionality
+
+### Protected Task Endpoints
+- `GET /api/v1/tasks` — Filterable, paginated task list
+- `GET /api/v1/tasks/stats` — User task summary
+- `GET /api/v1/tasks/{id}` — Task details (owner/admin only)
+- `POST /api/v1/tasks` — Create a new task
+- `PUT /api/v1/tasks/{id}` — Update a task
+- `PUT /api/v1/tasks/{id}/archive` — Archive a task
+- `PUT /api/v1/tasks/{id}/restore` — Restore an archived task
+- `DELETE /api/v1/tasks/{id}` — Delete a task (admin or owner)
+
+### Public Task Endpoints
+- `GET /api/v1/public/tasks` — Public paginated task list
+- `GET /api/v1/public/tasks/{id}` — Public task details
+
+### Task DTO Validation
+`TaskRequestDTO` enforces:
+- required title, status, and priority
+- maximum field lengths
+- custom enum validation for `status` and `priority`
+
+### Task Filtering
+`TaskSpecification` supports:
+- task owner filtering
+- status, priority, category filters
+- archived state filtering
+- due date and date range
+- title/description keyword search
+
+## 🧪 Development & Run Instructions
+
+### Build and Test
+```powershell
+cd "d:\Task Manager API\demo"
+.\mvnw.cmd clean install
 ```
 
-## Testing
-
-Run tests with:
-```bash
-.\mvnw.cmd test
+### Run with In-Memory Database
+```powershell
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=test
 ```
 
-## Build Output
-
-The built JAR file is located at: `target/demo-0.0.1-SNAPSHOT.jar`
-
-## Troubleshooting
-
-### JAVA_HOME not set
-If you get "JAVA_HOME environment variable is not defined correctly", set it:
-```bash
-# PowerShell
-$env:JAVA_HOME = "C:\Program Files\Java\jdk-23"
-
-# Command Prompt
-set JAVA_HOME=C:\Program Files\Java\jdk-23
+### Run with MySQL
+```powershell
+.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-### Port 8080 already in use
-If port 8080 is already in use, you can change it:
-```bash
-java -jar target/demo-0.0.1-SNAPSHOT.jar --server.port=8081
+### Run with Docker Compose
+```powershell
+docker-compose up --build
 ```
 
-## License
+## 📊 Test Summary
+- `DemoApplicationTests`
+- `TaskControllerTest`
+- `TaskServiceTest`
 
-This project is provided as-is for educational purposes.
+## 🧾 Notes for Developers
 
-## Support
+- Use `demo/` as the active application module.
+- `target/` is generated build output and should not be committed.
+- Frontend SPA assets are served from `src/main/resources/static/`.
+- `application-test.yml` is the default profile for local development.
+- `docker-compose.yml` includes app and MySQL services.
 
-For issues or questions, please check the application logs or review the test class in `src/test/java/`.
+## 📘 Recommended Review Points
+
+- `demo/src/main/java/com/example/demo/config/SecurityConfig.java`
+- `demo/src/main/java/com/example/demo/task/service/TaskService.java`
+- `demo/src/main/java/com/example/demo/security/config/JwtAuthenticationFilter.java`
+- `demo/src/main/java/com/example/demo/task/repository/TaskSpecification.java`
+- `demo/src/main/resources/db/migration/V1__init_schema.sql`
+
+## 📌 What Changed
+This documentation now reflects the actual project implementation, including service layer behavior, API contract, task filtering logic, authorization rules, and security flow.

@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: test
+  application:
+    name: task-manager-api
+  jpa:
+    open-in-view: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ["health", "prometheus"]
+  endpoint:
+    health:
+      show-details: always
